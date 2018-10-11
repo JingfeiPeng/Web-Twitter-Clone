@@ -4,7 +4,13 @@
 	
 	if ($_GET['page'] == "timeline"){
 		include("views/timeline.php");
-	} else{
+	} else if ($_GET['page'] == "yourtweets"){
+		include("views/yourtweets.php");
+	} else if ($_GET['page'] == "search"){
+		include("views/search.php");
+	} else if ($_GET['page'] == "publicProfile"){
+		include("views/publicProfile.php");
+	} else {
 		include("views/home.php");
 	}
 	include("views/footer.php");

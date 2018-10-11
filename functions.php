@@ -51,6 +51,18 @@
 				$whereClause .=" userid = ".$row['isFollowing'];
 			}
 			if ($whereClause == "") $whereClause = "WHERE userid = -1";
+		} else if ($type == "yourtweets"){
+			$whereClause = "WHERE userid = ".mysqli_real_escape_string($link,$_SESSION['id']);
+		} else if ($type == "search"){
+			echo '<p>Showing Results for: "'.mysqli_real_escape_string($link,$_GET['q']).'" </p>';
+			$whereClause = "WHERE tweet LIKE '%".mysqli_real_escape_string($link,$_GET['q'])."%'";
+		} else if (is_numeric($type)){
+			$userQuery = "SELECT * FROM users WHERE id = ".mysqli_real_escape_string($link, $type)." LIMIT 1";
+			$userQueryResult = mysqli_query($link,$userQuery);
+			$user = mysqli_fetch_assoc($userQueryResult);
+			// change to nicknames:
+			echo "<h2>".mysqli_real_escape_string($link,$user['email'])."'s tweets</h2>";
+			$whereClause = "WHERE userid = ".mysqli_real_escape_string($link,$type);
 		}
 		
 		$query = "SELECT * FROM tweets ".$whereClause." ORDER BY datetime DESC LIMIT 10";
@@ -63,7 +75,7 @@
 				$userQueryResult = mysqli_query($link,$userQuery);
 				$user = mysqli_fetch_assoc($userQueryResult);
 				
-				echo "<div class='tweet'><p>".$user['email']."<span class='time'> - ".time_since(time() - strtotime($row['datetime']))." ago:</span></p>";
+				echo "<div class='tweet'><p><a href='?page=publicProfile&userid".$user['id']	."'>".$user['email']."</a><span class='time'> - ".time_since(time() - strtotime($row['datetime']))." ago:</span></p>";
 				echo "<p>".$row['tweet']."</p>";
 				echo "<p><a class='toggleFollow' data-userId='".$row['userid']."'>";
 				
@@ -81,24 +93,43 @@
 	}
 	
 	function displaySearch(){
-		echo '<div class="form-inline">
+		echo '<form><div class="form-inline">
 			  <div class="form-group mb-2">
-				<input type="text" style="margin-right:5px" class="form-control" id="seach" value="Search">
+				<input type="hidden" name="page" value="search">
+				<input type="text" name="q" style="margin-right:5px" class="form-control" id="seach" value="Search">
 			  </div>
-			  <button class="btn btn-primary mb-2">Search Tweets</button>
-			</div>';
+			  <button type="submit" class="btn btn-primary mb-2">Search Tweets</button>
+			</div> </form>';
 	}
+	
 	function displayTweetBox(){
 
-		if ($_SESSION['id'] > 0){
-			echo '<div class="form">
+		if ($_SESSION['id'] >= 0){
+			echo '<div id="tweetSuccess" class="alert alert-success">Tweet posted successfully </div>
+				  <div id="tweetFail" class="alert alert-danger"></div>
+				<div class="form">
 				  <div class="form-group mb-2">
 					<textarea style="margin-right:5px" class="form-control" id="tweetContent"></textarea>
 				  </div>
-				  <button class="btn btn-primary mb-2">Post Tweet</button>
+				  <button id="postTweetButton" class="btn btn-primary mb-2">Post Tweet</button>
 				</div>';
 		
 		}
+	}
+	
+	function displayUsers(){
+		global $link;
+		$query = "SELECT * FROM users LIMIT 10";
+		$result = mysqli_query($link,$query);
+		if (mysqli_num_rows($result) == 0){
+			echo "There are no users to display";
+		} else{ //display users
+			while ($row  = mysqli_fetch_assoc($result)){
+				// do show up the next 10;
+				echo "<p> <a href='?page=publicProfile&userid=".$row['id']."'>".$row['email']."</a></p>";
+			}
+		}
+		
 	}
 	
 	

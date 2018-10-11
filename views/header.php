@@ -27,7 +27,7 @@
 			<a class="nav-link" href="?page=yourtweets">Your Tweets</a>
 		  </li>
 		  <li class="nav-item">
-			<a class="nav-link" href="?page=publicprofiles">Public Profiles</a>
+			<a class="nav-link" href="?page=publicProfile">Public Profiles</a>
 		  </li>
 		</ul>
 		<div class="form-inline my-2 my-lg-0">

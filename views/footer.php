@@ -95,7 +95,22 @@
 				}
 			})
 		})
-		
+		$("#postTweetButton").click(function(){
+			$.ajax({
+				type:"POST",
+				url:"actions.php?action=postTweet",
+				data:"tweetContent="+$("#tweetContent").val(),
+				success:function(result){
+					if (result == "1"){
+						$("#tweetSuccess").show();
+						$("#tweetFail").hide();
+					} else {
+						$("#tweetFail").html(result).show();
+						$("#tweetSuccess").hide();
+					}
+				}
+			})
+		});
 	</script>
   </body>
 </html>

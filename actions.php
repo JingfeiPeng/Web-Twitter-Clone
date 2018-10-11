@@ -22,8 +22,8 @@
 				'".mysqli_real_escape_string($link,$_POST['password'])."')";
 				if (mysqli_query($link,$query)){
 					$_SESSION['id'] = mysqli_insert_id($link);
-					$query = "UPDATE users SET password ='".md5(md5($_SESSION['id']).$_POST['password'])."' WHERE id =".$_SESSION['id']." LIMIT 1";
-					mysqli_query($link,$query);
+					/*$query = "UPDATE users SET password ='".md5(md5($_SESSION['id']).$_POST['password'])."' WHERE id =".$_SESSION['id']." LIMIT 1";
+					mysqli_query($link,$query);*/
 					echo "1";
 				} else{
 					$error = "Couldn't create user";
@@ -33,7 +33,8 @@
 			$query = "SELECT * FROM users WHERE email = '".mysqli_real_escape_string($link,$_POST['email'])."' LIMIT 1";
 			$result = mysqli_query($link,$query);
 			$row = mysqli_fetch_assoc($result);
-			if ($row['password'] == md5(md5($row['id']).$_POST['password'])){
+			//$row['password'] == md5(md5($row['id']).$_POST['password']
+			if ($row['password'] == $_POST['password']){
 				$_SESSION['id'] = row['id'];
 				echo "1";
 			} else{
@@ -56,6 +57,19 @@
 		} else {
 			mysqli_query($link, "INSERT INTO isFollowing (follower, isFollowing) VALUES (". mysqli_real_escape_string($link, $_SESSION['id']).", ". mysqli_real_escape_string($link, $_POST['userId']).")");
 			echo "2";			
+		}
+	}
+	if ($_GET['action'] == "postTweet"){
+		if (!$_POST['tweetContent']){
+			echo "Missing contents";
+		} else if (strlen($_POST['tweetContent']) > 150){ // checks less than 150 characters
+			echo "Your tweet is too long";
+		} else {
+			$query =  "INSERT INTO tweets (tweet, userid, datetime) VALUES ('". mysqli_real_escape_string($link, $_POST['tweetContent'])."', 
+			". mysqli_real_escape_string($link, $_SESSION['id']).", NOW())";
+			mysqli_query($link,$query);
+			echo "1";
+
 		}
 	}
 

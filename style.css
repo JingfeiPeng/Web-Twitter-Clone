@@ -13,6 +13,13 @@
 	display:none;
 }
 
+#tweetSuccess{
+	display: none;
+}
+#tweetFail{
+	display: none;
+}
+
 .maincontainer{
 	padding:20px;
 }
